@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meeting Time Converter · Intalo</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0d1b2e;
+    --navy-mid: #112240;
+    --navy-card: #172a45;
+    --navy-border: #1e3a5f;
+    --teal: #00c4b4;
+    --teal-dim: rgba(0,196,180,0.12);
+    --white: #ffffff;
+    --off-white: #e8f0f8;
+    --muted: #7a9abf;
+    --text: #c8ddf2;
+  }
+
+- { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+background: var(–navy);
+color: var(–white);
+font-family: ‘Inter’, sans-serif;
+min-height: 100vh;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+padding: 2rem 1rem;
+}
+
+body::before {
+content: ‘’;
+position: fixed;
+inset: 0;
+background-image:
+linear-gradient(rgba(0,196,180,0.04) 1px, transparent 1px),
+linear-gradient(90deg, rgba(0,196,180,0.04) 1px, transparent 1px);
+background-size: 48px 48px;
+pointer-events: none;
+}
+
+.wrapper {
+width: 100%;
+max-width: 600px;
+position: relative;
+}
+
+.header {
+text-align: center;
+margin-bottom: 2.5rem;
+}
+
+.eyebrow {
+font-size: 0.62rem;
+font-weight: 600;
+letter-spacing: 0.25em;
+text-transform: uppercase;
+color: var(–teal);
+margin-bottom: 0.75rem;
+}
+
+h1 {
+font-family: ‘Montserrat’, sans-serif;
+font-size: 2rem;
+font-weight: 800;
+color: var(–white);
+line-height: 1.15;
+}
+
+h1 em {
+color: var(–teal);
+font-style: normal;
+}
+
+.subtitle {
+margin-top: 0.6rem;
+font-size: 0.85rem;
+color: var(–muted);
+}
+
+.card {
+background: var(–navy-card);
+border: 1px solid var(–navy-border);
+border-radius: 16px;
+padding: 2rem 2.25rem;
+box-shadow: 0 24px 64px rgba(0,0,0,0.45);
+}
+
+.input-row {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 1.25rem;
+}
+
+.field label {
+display: block;
+font-size: 0.6rem;
+font-weight: 600;
+letter-spacing: 0.18em;
+text-transform: uppercase;
+color: var(–teal);
+margin-bottom: 0.5rem;
+}
+
+.field input[type=“date”],
+.field input[type=“time”] {
+width: 100%;
+background: var(–navy-mid);
+border: 1px solid var(–navy-border);
+border-radius: 8px;
+padding: 0.7rem 0.9rem;
+font-family: ‘Inter’, sans-serif;
+font-size: 1rem;
+font-weight: 500;
+color: var(–white);
+outline: none;
+cursor: pointer;
+transition: border-color 0.2s, box-shadow 0.2s;
+color-scheme: dark;
+}
+
+.field input:focus {
+border-color: var(–teal);
+box-shadow: 0 0 0 3px rgba(0,196,180,0.15);
+}
+
+.field input::-webkit-calendar-picker-indicator {
+filter: invert(0.6) sepia(1) hue-rotate(145deg);
+cursor: pointer;
+}
+
+.divider {
+border: none;
+border-top: 1px solid var(–navy-border);
+margin: 1.5rem 0;
+}
+
+.city-row {
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 1rem;
+padding: 1rem 0;
+border-bottom: 1px solid var(–navy-border);
+animation: fadeUp 0.3s ease both;
+}
+
+@keyframes fadeUp {
+from { opacity: 0; transform: translateY(6px); }
+to   { opacity: 1; transform: translateY(0); }
+}
+
+.city-row:first-child { padding-top: 0; }
+.city-row.no-border   { border-bottom: none; padding-bottom: 0; }
+
+.city-left { flex: 1; }
+
+.city-name {
+font-family: ‘Montserrat’, sans-serif;
+font-size: 0.95rem;
+font-weight: 700;
+color: var(–white);
+}
+
+.city-name.primary { color: var(–teal); }
+
+.city-tz {
+font-size: 0.6rem;
+letter-spacing: 0.08em;
+text-transform: uppercase;
+color: var(–muted);
+margin-top: 0.15rem;
+}
+
+.city-offset {
+font-size: 0.62rem;
+color: var(–muted);
+font-style: italic;
+margin-top: 0.2rem;
+}
+
+.city-right { text-align: right; }
+
+.city-time {
+font-family: ‘Montserrat’, sans-serif;
+font-size: 1.55rem;
+font-weight: 700;
+color: var(–white);
+letter-spacing: -0.02em;
+line-height: 1;
+}
+
+.city-time.primary {
+color: var(–teal);
+font-size: 1.75rem;
+}
+
+.city-date {
+font-size: 0.62rem;
+color: var(–muted);
+margin-top: 0.25rem;
+letter-spacing: 0.03em;
+}
+
+.day-badge {
+display: inline-block;
+background: rgba(0,196,180,0.15);
+color: var(–teal);
+font-size: 0.55rem;
+font-weight: 600;
+letter-spacing: 0.08em;
+text-transform: uppercase;
+padding: 0.1rem 0.35rem;
+border-radius: 4px;
+margin-left: 0.3rem;
+vertical-align: middle;
+}
+
+.dropdown-wrap {
+margin-top: 1.5rem;
+}
+
+.dropdown-wrap label {
+display: block;
+font-size: 0.6rem;
+font-weight: 600;
+letter-spacing: 0.18em;
+text-transform: uppercase;
+color: var(–teal);
+margin-bottom: 0.5rem;
+}
+
+select {
+width: 100%;
+background: var(–navy-mid);
+border: 1px solid var(–navy-border);
+border-radius: 8px;
+padding: 0.7rem 2rem 0.7rem 0.9rem;
+font-family: ‘Inter’, sans-serif;
+font-size: 0.9rem;
+font-weight: 500;
+color: var(–text);
+outline: none;
+cursor: pointer;
+appearance: none;
+-webkit-appearance: none;
+background-image: url(“data:image/svg+xml,%3Csvg xmlns=‘http://www.w3.org/2000/svg’ width=‘12’ height=‘7’ viewBox=‘0 0 12 7’%3E%3Cpath d=‘M1 1l5 5 5-5’ stroke=’%2300c4b4’ stroke-width=‘1.5’ fill=‘none’ stroke-linecap=‘round’ stroke-linejoin=‘round’/%3E%3C/svg%3E”);
+background-repeat: no-repeat;
+background-position: right 0.9rem center;
+transition: border-color 0.2s, box-shadow 0.2s;
+color-scheme: dark;
+}
+
+select:focus {
+border-color: var(–teal);
+box-shadow: 0 0 0 3px rgba(0,196,180,0.15);
+}
+
+select option {
+background: var(–navy-card);
+color: var(–white);
+}
+
+#extraCityWrap { margin-top: 0; }
+
+.empty {
+text-align: center;
+padding: 1.5rem 0 0.5rem;
+color: var(–muted);
+font-size: 0.85rem;
+font-style: italic;
+}
+
+.footer {
+text-align: center;
+margin-top: 1.25rem;
+font-size: 0.6rem;
+letter-spacing: 0.1em;
+text-transform: uppercase;
+color: var(–muted);
+}
+
+.dot {
+display: inline-block;
+width: 5px; height: 5px;
+background: var(–teal);
+border-radius: 50%;
+margin: 0 0.4rem;
+vertical-align: middle;
+opacity: 0.7;
+}
+</style>
+
+</head>
+<body>
+<div class="wrapper">
+
+  <div class="header">
+    <p class="eyebrow">Intalo Group · Internal Tool</p>
+    <h1>Meeting Time <em>Converter</em></h1>
+    <p class="subtitle">Set a Melbourne time — see it instantly across the globe.</p>
+  </div>
+
+  <div class="card">
+
+```
+<div class="input-row">
+  <div class="field">
+    <label>Date · Melbourne</label>
+    <input type="date" id="dateInput">
+  </div>
+  <div class="field">
+    <label>Time · Melbourne</label>
+    <input type="time" id="timeInput">
+  </div>
+</div>
+
+<hr class="divider">
+
+<div id="cityRows">
+  <div class="empty">Select a date and time above.</div>
+</div>
+
+<div class="dropdown-wrap">
+  <label>Add another city</label>
+  <select id="citySelect">
+    <option value="">— Select a city —</option>
+    <option value="America/New_York|New York, USA">New York, USA</option>
+    <option value="America/Los_Angeles|Los Angeles, USA">Los Angeles, USA</option>
+    <option value="America/Chicago|Chicago, USA">Chicago, USA</option>
+    <option value="America/Toronto|Toronto, Canada">Toronto, Canada</option>
+    <option value="America/Sao_Paulo|São Paulo, Brazil">São Paulo, Brazil</option>
+    <option value="Europe/Paris|Paris, France">Paris, France</option>
+    <option value="Europe/Berlin|Berlin, Germany">Berlin, Germany</option>
+    <option value="Europe/Moscow|Moscow, Russia">Moscow, Russia</option>
+    <option value="Europe/Istanbul|Istanbul, Turkey">Istanbul, Turkey</option>
+    <option value="Africa/Johannesburg|Johannesburg, S. Africa">Johannesburg, S. Africa</option>
+    <option value="Africa/Lagos|Lagos, Nigeria">Lagos, Nigeria</option>
+    <option value="Asia/Dubai|Dubai, UAE">Dubai, UAE</option>
+    <option value="Asia/Karachi|Karachi, Pakistan">Karachi, Pakistan</option>
+    <option value="Asia/Kolkata|Mumbai / Delhi, India">Mumbai / Delhi, India</option>
+    <option value="Asia/Dhaka|Dhaka, Bangladesh">Dhaka, Bangladesh</option>
+    <option value="Asia/Bangkok|Bangkok, Thailand">Bangkok, Thailand</option>
+    <option value="Asia/Singapore|Singapore">Singapore</option>
+    <option value="Asia/Shanghai|Shanghai / Beijing, China">Shanghai / Beijing, China</option>
+    <option value="Asia/Tokyo|Tokyo, Japan">Tokyo, Japan</option>
+    <option value="Pacific/Auckland|Auckland, New Zealand">Auckland, New Zealand</option>
+  </select>
+</div>
+
+<div id="extraCityWrap"></div>
+```
+
+  </div>
+
+  <p class="footer">
+    <span class="dot"></span>
+    Automatically adjusts for daylight saving time
+    <span class="dot"></span>
+  </p>
+
+</div>
+<script>
+  const dateInput    = document.getElementById('dateInput');
+  const timeInput    = document.getElementById('timeInput');
+  const cityRowsEl   = document.getElementById('cityRows');
+  const citySelect   = document.getElementById('citySelect');
+  const extraWrapEl  = document.getElementById('extraCityWrap');
+
+dateInput.value = new Date().toLocaleDateString(‘en-CA’);
+timeInput.value = ‘09:00’;
+
+const FIXED = [
+{ name: ‘Melbourne’, tz: ‘Australia/Melbourne’, label: ‘AEDT / AEST’, primary: true },
+{ name: ‘London’,    tz: ‘Europe/London’,       label: ‘GMT / BST’ },
+{ name: ‘Riyadh’,   tz: ‘Asia/Riyadh’,         label: ‘AST · UTC+3’ },
+];
+
+function getMeetingUtc(dv, tv) {
+const tmp = new Date(`${dv}T${tv}:00Z`);
+const ms = tmp.toLocaleString(‘en-CA’, { timeZone:‘Australia/Melbourne’, hour12:false, year:‘numeric’, month:‘2-digit’, day:‘2-digit’, hour:‘2-digit’, minute:‘2-digit’, second:‘2-digit’ });
+const [md, mt] = ms.split(’, ‘);
+const [mY,mM,mD] = md.split(’-’).map(Number);
+const [mH,mMin]  = mt.split(’:’).map(Number);
+const [y,mo,d]   = dv.split(’-’).map(Number);
+const [h,mi]     = tv.split(’:’).map(Number);
+return new Date(tmp.getTime() + (Date.UTC(y,mo-1,d,h,mi) - Date.UTC(mY,mM-1,mD,mH,mMin)));
+}
+
+function fmtTime(utc, tz) {
+return utc.toLocaleTimeString(‘en-GB’, { timeZone:tz, hour:‘2-digit’, minute:‘2-digit’, hour12:false });
+}
+
+function fmtDate(utc, tz) {
+return utc.toLocaleDateString(‘en-GB’, { timeZone:tz, weekday:‘short’, day:‘numeric’, month:‘short’, year:‘numeric’ });
+}
+
+function dayDiff(utc, tz) {
+const mD = utc.toLocaleDateString(‘en-CA’, { timeZone:‘Australia/Melbourne’ });
+const tD = utc.toLocaleDateString(‘en-CA’, { timeZone:tz });
+const d  = (new Date(tD) - new Date(mD)) / 86400000;
+if (!d) return null;
+if (d === 1) return ‘next day’;
+if (d === -1) return ‘prev day’;
+return d > 0 ? `+${d} days` : `${d} days`;
+}
+
+function offsetMins(utc, tz) {
+const p = s => { const [d,t]=s.split(’, ‘); const [y,mo,dy]=d.split(’-’); const [h,mi]=t.split(’:’); return Date.UTC(+y,+mo-1,+dy,+h,+mi); };
+const us = utc.toLocaleString(‘en-CA’,{ timeZone:‘UTC’,                  hour12:false, year:‘numeric’,month:‘2-digit’,day:‘2-digit’,hour:‘2-digit’,minute:‘2-digit’,second:‘2-digit’ });
+const ts = utc.toLocaleString(‘en-CA’,{ timeZone:tz,                     hour12:false, year:‘numeric’,month:‘2-digit’,day:‘2-digit’,hour:‘2-digit’,minute:‘2-digit’,second:‘2-digit’ });
+return (p(ts)-p(us))/60000;
+}
+
+function offsetLabel(utc, tz) {
+const diff = offsetMins(utc, tz) - offsetMins(utc, ‘Australia/Melbourne’);
+if (!diff) return ‘same time as Melbourne’;
+const abs = Math.abs(diff), h = Math.floor(abs/60), m = abs%60;
+const dir = diff > 0 ? ‘ahead of’ : ‘behind’;
+return m ? `${h} hr${h!==1?'s':''} ${m} min ${dir} Melbourne`
+: `${h} hr${h!==1?'s':''} ${dir} Melbourne`;
+}
+
+function buildRow(city, utc, last) {
+const time   = fmtTime(utc, city.tz);
+const date   = fmtDate(utc, city.tz);
+const diff   = city.primary ? null : dayDiff(utc, city.tz);
+const offset = city.primary ? null : offsetLabel(utc, city.tz);
+const badge  = diff ? `<span class="day-badge">${diff}</span>` : ‘’;
+return `<div class="city-row${last ? ' no-border' : ''}"> <div class="city-left"> <div class="city-name${city.primary ? ' primary' : ''}">${city.name}</div> <div class="city-tz">${city.label}</div> ${offset ?`<div class="city-offset">${offset}</div>` : ''} </div> <div class="city-right"> <div class="city-time${city.primary ? ' primary' : ''}">${time}</div> <div class="city-date">${date}${badge}</div> </div> </div>`;
+}
+
+function render() {
+const dv = dateInput.value, tv = timeInput.value, sv = citySelect.value;
+
+```
+if (!dv || !tv) {
+  cityRowsEl.innerHTML = '<div class="empty">Select a date and time above.</div>';
+  extraWrapEl.innerHTML = '';
+  return;
+}
+
+const utc = getMeetingUtc(dv, tv);
+const hasExtra = !!sv;
+
+cityRowsEl.innerHTML = FIXED.map((c,i) =>
+  buildRow(c, utc, !hasExtra && i === FIXED.length - 1)
+).join('');
+
+if (hasExtra) {
+  const [tz, name] = sv.split('|');
+  extraWrapEl.innerHTML =
+    `<hr class="divider" style="margin-top:0">` +
+    buildRow({ name, tz, label: tz }, utc, true);
+} else {
+  extraWrapEl.innerHTML = '';
+}
+```
+
+}
+
+dateInput.addEventListener(‘input’, render);
+timeInput.addEventListener(‘input’, render);
+citySelect.addEventListener(‘change’, render);
+render();
+</script>
+
+</body>
+</html>
